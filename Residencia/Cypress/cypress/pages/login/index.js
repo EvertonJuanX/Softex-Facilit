@@ -1,27 +1,41 @@
-import { elements } from "./elements";
+import BasePage from "../basePage";
+import { elements as el } from "./elements";
 
-class Login {
-    carregarPagina () {
-        cy.visit('https://fapsoftex.plataformatarget.com.br/web/fap/login')
-    }
+class LoginPage extends BasePage {
+  visitar() {
+    super.visit("/login")
+  }
 
-    loginSucesso () {
-        cy.get(elements.username).type('evertonjuandev@gmail.com')
-        cy.get(elements.password).type('faptarget123')
-        cy.get(elements.loginButton).click()
-    }
+  preencherUsuario(usuario) {
+    this.type(el.USUARIO, usuario);
+  }
 
-    loginInvalido () {
-        cy.get(elements.username).type('emailinvalido@gmail.com')
-        cy.get(elements.username).type('senhainvalida')
-        cy.get(elements.loginButton).click()
-        cy.get(elements.loginInvalido, {timeout: 10000}).should('exist')
-    }
+  preencherSenha(senha) {
+    this.type(el.PASSWORD, senha);
+  }
 
-    validarErroCrendicialInvalida () {
-        cy.get(elements.loginInvalido).should('exist')
-            .and('contain', 'A autenticação falhou, usuário não cadastrado no sistema.');
-    }
+  clicarBotaoEntrar() {
+    this.click(el.BTN_LOGIN);
+  }
+
+  realizarLogin(usuario, senha) {
+    this.preencherUsuario(usuario);
+    this.preencherSenha(senha);
+    this.clicarBotaoEntrar();
+  }
+
+  validarMensagemErro() {
+    this.shouldContainText(el.ERROR_LOGIN);
+  }
+
+  carregarUsuarios() {
+    return this.carregarFixture('users', (users) => {
+      users.valido.usuario = Cypress.env('VALID_USER');
+      users.valido.senha = Cypress.env('VALID_PASSWORD');
+      users.invalido.usuario = Cypress.env('INVALID_USER');
+      users.invalido.senha = Cypress.env('INVALID_PASSWORD');
+    });
+  }
 }
 
-export default new Login();
+export default new LoginPage();

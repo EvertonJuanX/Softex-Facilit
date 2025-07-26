@@ -1,9 +1,9 @@
+import { elements as el } from './elements';
+
 class HomePage {
-    validarLoginSucesso() {
-        cy.url().should(
-            'eq', 'https://fapsoftex.plataformatarget.com.br/web/fap/2025/home#/');
-        cy.screenshot('Acesso a homepage')
-    }
+  validarLoginComSucesso() {
+    cy.url().should('include', el.URL_HOMEPAGE); 
+  }
 }
 
 export default new HomePage();
